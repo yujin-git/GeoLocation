@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Geolocation22_2.html</title>
+</head>
+<body>
+    <fieldset>
+        <legend>Geolocation API-현재 위치 갱신하기</legend>
+        <button onclick="start();">위치 추적 시작</button>
+        <button onclick="stop();">위치 추적 정지</button>
+        <span id="display" style="color: royalblue; font-size: 1.5em; font-weight: bold"></span>
+
+    </fieldset>
+    <script>
+        console.log(window.navigator.geolocation);
+        //DOM(Document Object Model) 객체 얻기
+        var span = document.getElementById('display');
+        var watcher;
+        function start() {
+            if(navigator.geolocation) {
+                span.innerHTML = 'Geolocation API를 지원하는 브라우저';
+                //PositionOptions 객체 설정용
+                var options = {timeout:3000,maxinumAge:5000};
+
+                //현재 위치 정보 갱신시마다 위치 얻기
+                watcher = navigator.geolocation.watchPosition(successCallback, errorCallback, options);
+                console.log('watcher: ' + watcher);
+            }
+        }
+        
+        var stop = function(){
+            //위치정보 받기 중지
+            navigator.geolocation.clearWatch(watcher);
+        };
+
+        //위치 정보를 정상적으로 얻었을 때 자동으로 호출되는 콜백 함수: 인자는 Position 객체
+        function successCallback(position) {
+            console.log('position의 자료형: '+typeof(position));
+            console.log(position);
+            //위도 ● 경도 얻기
+            var lat = position.coords.latitude; //위도
+            var lng = position.coords.longitude; //경도
+            span.innerHTML = '위도: ' + lat + ', 경도: ' + lng;
+            
+        }
+        //에러 발생 시 자동으로 호출되는 콜백 함수: 인자는 Position 객체
+        var errorCallback = function(error) {
+            switch(error.code) {
+                case 1:
+                    span.innerHTML = '허용이 거부된'; break;
+                case 2:
+                    span.innerHTML = '위치 확인 불가'; break;
+                case 3:
+                    span.innerHTML = '시간 초과'; break;
+                default:
+                    span.innerHTML = error.message;
+            }
+        };
+        
+        
+
+    </script>
+</body>
+</html>
