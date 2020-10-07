@@ -23,7 +23,7 @@
 
     <script
       type="text/javascript"
-      src="//dapi.kakao.com/v2/maps/sdk.js?appkey=d8f5e8ba5f65a4ece3fee8bede31e511"
+      src="//dapi.kakao.com/v2/maps/sdk.js?appkey=d8f5e8ba5f65a4ece3fee8bede31e511&libraries=services"
     ></script>
     <script>
       /*
@@ -93,7 +93,7 @@
         // 인포윈도우를 생성합니다
         var infowindow = new kakao.maps.InfoWindow({
           content: content,
-          removable: true
+          removable: true,
         });
 
         // 마커에 클릭이벤트를 등록합니다
@@ -102,6 +102,32 @@
           infowindow.open(map, marker);
         });
       }
+
+      //한글 주소로 지도 표시하기
+      function searchByAddress() {
+        //입력 주소명 얻기
+        var address = document.getElementById("address").value;
+        // 주소-좌표 변환 객체를 생성합니다
+        var geocoder = new kakao.maps.services.Geocoder();
+
+        // 주소로 좌표를 검색합니다
+        geocoder.addressSearch(address, function (result,status) {
+            // 정상적으로 검색이 완료됐으면
+            if (status === kakao.maps.services.Status.OK) {
+                var lat = result[0].y; //위도
+                var lng = result[0].x; //경도
+
+                setMarker(lat,lng,'<div style="padding:5px;">'+address+'</div>');
+
+
+                // 지도의 중심을 결과값으로 받은 위치로 이동시킵니다
+                map.setCenter(new kakao.maps.LatLng(lat,lng));
+                }
+                else {
+                    alert(address + '와 일치하는 주소가 없어요');
+                }
+            });
+        }
     </script>
   </body>
 </html>
